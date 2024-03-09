@@ -43,7 +43,10 @@ GIF created with LICEcap
 ## Notes
 
 Describe any challenges encountered while building the app.
+- Understand how to plan for the final functionality
+- How conditional-based visual elements are drawn/shown on the webpage
 
+  
 ## License
 
     Copyright 2024 Reneca Cappuno
