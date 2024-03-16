@@ -18,27 +18,51 @@ const cardPairs = [
     { logo: "src/logos/van.png", schoolName: "Vanderbilt University", masteryLevel: 0 }
   ];
 
-const Cards = ({ masteryLevel }) => {
+
+const Cards = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showFront, setShowFront] = useState(true);
   const [prevIndices, setPrevIndices] = useState([]);
   const [currentCards, setCurrentCards] = useState(cardPairs);
+  const [userInput, setUserInput] = useState('');
 
+  const handleInputChange = (event) => {
+    setUserInput(event.target.value);
+  }
+
+  const handleCheck = () => {
+    if (userInput.toLowerCase() === cardPairs[currentCardIndex].schoolName.toLowerCase()) {
+        alert("Correct!");
+    } else {
+        alert("Incorrect, try again.");
+    }
+}
+
+  
   // Function to update mastery level of the current card
-  const updateMasteryLevel = (masteryLevel) => {
-    const updatedCardPairs = [...currentCards]; // Create a copy of cardPairs
-    updatedCardPairs[currentCardIndex].masteryLevel = masteryLevel; // Update mastery level of the current card
-    // You might want to update the cardPairs state or perform other actions here
-    setCurrentCards(updatedCardPairs);
-    console.log('should change color');
+  const updateMasteryLevel = () => {
+   cardPairs[currentCardIndex].masteryLevel++;
+   // You might want to update the cardPairs state or perform other actions here
+    setCurrentCards(cardPairs);
   };
+
+  
+  console.log("current card level", cardPairs[currentCardIndex].masteryLevel);
 
   const handleNextCard = () => {
-    const newIndex = Math.floor(Math.random() * cardPairs.length);
-    setPrevIndices(prevIndices => [...prevIndices, currentCardIndex]);
-    setCurrentCardIndex(newIndex);
-    setShowFront(true); // Show front of card by default for new card
-  };
+    const newIndex = currentCardIndex + 1;
+    if (newIndex < cardPairs.length) {
+        setPrevIndices(prevIndices => [...prevIndices, currentCardIndex]);
+        setCurrentCardIndex(newIndex);
+        setShowFront(true); // Show front of card by default for new card
+    } else {
+        // If reached the end of the array, handle as needed
+        // For example, reset to the beginning of the array
+        setCurrentCardIndex(0);
+        setShowFront(true); // Show front of card for the first card
+    }
+};
+
 
   const toggleCardSide = () => {
     setShowFront(!showFront);
@@ -54,12 +78,12 @@ const Cards = ({ masteryLevel }) => {
   };
 
   const getColorClass = () => {
-    const currentCard = currentCards[currentCardIndex];
-    if (currentCard.masteryLevel === 1) {
+    const currentCardLevel = cardPairs[currentCardIndex].masteryLevel;
+    if (currentCardLevel === 1) {
       return "red";
-    } else if (currentCard.masteryLevel === 2) {
+    } else if (currentCardLevel === 2) {
       return "yellow";
-    } else if (currentCard.masteryLevel >= 3) {
+    } else if (currentCardLevel >= 3) {
       return "green";
     } else {
       return ""; // Default color
@@ -67,19 +91,30 @@ const Cards = ({ masteryLevel }) => {
   };
 
   return (
-    <div className= {`my-cards${getColorClass()}`}>
-      <div className="card" onClick={toggleCardSide}>
+    <div className="my-cards" >
+      <div className="card" onClick={toggleCardSide} style={{ backgroundColor: getColorClass() }}>
         {showFront ? (
           <img src={currentCards[currentCardIndex].logo} alt="School Logo" />
         ) : (
           <p>{currentCards[currentCardIndex].schoolName}</p>
         )}
       </div>
-      <button className="prevButton" onClick={handlePreviousCard}>Previous</button>
-      <button className="nextButton" onClick={handleNextCard}>Next</button>
-      <button className="markButton" onClick={updateMasteryLevel}>Confident on this Logo? Click me to mark the card!</button>
+      <div>
+        User Input: {userInput}
+      </div>
+      <input
+        type="text"
+        value={userInput}
+        onChange={handleInputChange}
+        placeholder="Enter your guess"
+      />
+      <button className="nextButton" onClick={handleCheck}>Check</button>
+      <div>
+        <button className="prevButton" onClick={handlePreviousCard}>Previous</button>
+        <button className="nextButton" onClick={handleNextCard}>Next</button>
+        <button className="markButton" onClick={updateMasteryLevel}>Confident on this Logo? Click me to mark the card!</button>
+      </div>
     </div>
   );
 };
-
 export default Cards;
